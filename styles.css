@@ -1,0 +1,13 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+body {
+  margin: 0;
+  font-family: Verdana, Geneva, sans-serif;
+}
+
+a {
+  @apply text-inherit;
+  @apply no-underline;
+}
