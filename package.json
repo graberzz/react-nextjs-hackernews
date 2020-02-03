@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
+    "analyze": "ANALYZE=true next build",
     "dev": "next dev",
     "start": "next start",
     "test": "jest",
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "@fullhuman/postcss-purgecss": "^2.0.5",
+    "@next/bundle-analyzer": "^9.2.1",
     "@testing-library/jest-dom": "^5.0.2",
     "@testing-library/react": "^9.4.0",
     "@types/jest": "^24.9.1",
