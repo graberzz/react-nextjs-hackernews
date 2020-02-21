@@ -1,7 +1,15 @@
 import { ThunkAction, ThunkDispatch } from 'redux-thunk'
-import { HNItem } from '~/types'
+import { createSelector, OutputSelector } from 'reselect'
+import { HNItem, HNCategory } from '~/types'
 import { State } from '~/store'
-import { getItemById } from '~/api'
+import {
+  getItemById,
+  getTopStories,
+  getShowStories,
+  getAskStories,
+  getNewStories,
+  getJobStories,
+} from '~/api'
 
 export interface FetchPartAction {
   type: 'FETCH_PART'
@@ -18,7 +26,11 @@ export interface ReceiveItemsAction {
   items: Record<number, HNItem>
 }
 
-export type ActionTypes = FetchPartAction | AddPartAction | ReceiveItemsAction
+export interface ReceiveCategoryAction {
+  type: 'RECEIVE_CATEGORY'
+  category: HNCategory
+  ids: number[]
+}
 
 export type AppThunkAction<ReturnType = void> = ThunkAction<
   ReturnType,
@@ -27,8 +39,16 @@ export type AppThunkAction<ReturnType = void> = ThunkAction<
   ActionTypes
 >
 
+export type ActionTypes =
+  | FetchPartAction
+  | AddPartAction
+  | ReceiveItemsAction
+  | ReceiveCategoryAction
+
 export type AppThunkDispatch = ThunkDispatch<State, null, ActionTypes>
-const receiveItems = (items: Record<number, HNItem>): ReceiveItemsAction => ({
+export const receiveItems = (
+  items: Record<number, HNItem>,
+): ReceiveItemsAction => ({
   type: 'RECEIVE_ITEMS',
   items,
 })
@@ -45,4 +65,29 @@ export const receiveItemsThunk = (
   )
 
   dispatch(receiveItems(items))
+}
+
+const receiveCategory = (
+  category: HNCategory,
+  ids: number[],
+): ReceiveCategoryAction => ({
+  type: 'RECEIVE_CATEGORY',
+  category,
+  ids,
+})
+
+export const receiveCategoryThunk = (
+  category: HNCategory,
+): AppThunkAction => async dispatch => {
+  const map: Record<HNCategory, () => Promise<number[]>> = {
+    top: getTopStories,
+    show: getShowStories,
+    ask: getAskStories,
+    new: getNewStories,
+    jobs: getJobStories,
+  }
+
+  const ids = await map[category]()
+
+  dispatch(receiveCategory(category, ids))
 }

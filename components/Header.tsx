@@ -1,9 +1,13 @@
 import Nav from './Nav'
 import Link from 'next/link'
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  className?: string
+}
+
+const Header: React.FC<HeaderProps> = ({ className }) => {
   return (
-    <header className="flex items-center bg-primary">
+    <header className={`${className} flex items-center bg-primary`}>
       <Link href="/">
         <a>
           <img src="/logo.svg" width="40" height="40" />
@@ -17,6 +21,10 @@ const Header: React.FC = () => {
       </div>
     </header>
   )
+}
+
+Header.defaultProps = {
+  className: '',
 }
 
 export default Header

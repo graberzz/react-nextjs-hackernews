@@ -4,7 +4,7 @@ import withRedux from 'next-redux-wrapper'
 import App, { AppContext } from 'next/app'
 import 'nprogress/nprogress.css'
 import configureStore, { State } from '~/store/'
-import { ActionTypes } from '~/store/actions'
+import { ActionTypes, AppThunkAction } from '~/store/actions'
 import '~/styles.css'
 import Layout from '~/components/Layout'
 import '~/plugins/nprogress'
@@ -33,7 +33,7 @@ class MyApp extends App<MyAppContext> {
   }
 }
 declare module 'next/dist/next-server/lib/utils' {
-  export interface NextPageContext<S = any, A extends Action = AnyAction> {
+  export interface NextPageContext<S = State, A extends Action = any> {
     /**
      * Provided by next-redux-wrapper: Whether the code is executed on the server or the client side
      */

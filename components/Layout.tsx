@@ -1,19 +1,14 @@
 import Header from '~/components/Header'
-import Footer from '~/components/Footer'
-import PropTypes from 'prop-types'
+import Footer from './Footer'
 
-const Layout: React.FC = props => {
+const Layout: React.FC = ({ children }) => {
   return (
     <div className="w-full md:w-4/5 md:mx-auto">
       <Header />
-      <div className="bg-background">{props.children}</div>
+      <main className="bg-background pt-4 pb-8">{children}</main>
       <Footer />
     </div>
   )
-}
-
-Layout.propTypes = {
-  children: PropTypes.any,
 }
 
 export default Layout

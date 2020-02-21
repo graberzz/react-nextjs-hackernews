@@ -1,40 +1,65 @@
 import { NextPage } from 'next'
-import axios from 'axios'
-import Comment from '~/components/Comment'
-import { HNItem } from '~/types'
-import { getItemById } from '~/api'
+import { HNItem, HNItemType, RenderHNItem } from '~/types'
+import { receiveItemsThunk } from '~/store/actions'
+import ItemComment from '~/components/ItemComment'
+import ItemStory from '~/components/ItemStory'
 
-interface ItemPageProps {
-  item: HNItem
-  kids: any[]
-}
+const mapItemToComponent = (item: RenderHNItem): React.FC<any> => {
+  const map: Record<HNItemType, React.FC<any>> = {
+    story: ItemStory,
+    comment: ItemComment,
 
-const ItemPage: NextPage<ItemPageProps> = ({ item, kids }) => {
-  return (
-    <>
-      <pre>{JSON.stringify(item, undefined, 2)}</pre>
-      <pre>{JSON.stringify(kids, undefined, 2)}</pre>
-    </>
-  )
-}
-
-ItemPage.getInitialProps = async ctx => {
-  const deepFetch = async (id: string | number): Promise<ItemPageProps> => {
-    console.count()
-    console.log('1-df ', id)
-    const item = await getItemById(id)
-    let kids: any[] = []
-
-    if (!item.kids) return { item, kids }
-
-    kids = await Promise.all(item.kids.map(id => deepFetch(id)))
-    console.log('2-df ', id)
-
-    return { item, kids }
+    job: ItemComment,
+    poll: ItemComment,
+    pollopt: ItemComment,
   }
-  const props = await deepFetch(ctx.query.id as string)
 
-  return props
+  return map[item.type]
+}
+interface ItemPageProps {
+  item: RenderHNItem
+}
+const ItemPage: NextPage<ItemPageProps> = ({ item }) => {
+  const ItemComponent = mapItemToComponent(item)
+
+  return <ItemComponent item={item} />
+}
+
+ItemPage.getInitialProps = async ({ store, query }) => {
+  const id = Number(query.id)
+
+  if (!store.getState().items[id]) {
+    await store.dispatch<any>(receiveItemsThunk([id]))
+  }
+
+  // Fething item's kids, their kids etc. recursively
+  async function getItemWithKids(item: HNItem): Promise<RenderHNItem> {
+    if (!item.kids) {
+      return (item as unknown) as RenderHNItem
+    }
+
+    const kidItems = await Promise.all(
+      item.kids.map(async id => {
+        const state = store.getState()
+
+        if (state.items[id]) {
+          return state.items[id]
+        }
+
+        await store.dispatch(receiveItemsThunk([id]))
+
+        return store.getState().items[id]
+      }),
+    )
+    const kidItemsWithKids = await Promise.all(kidItems.map(getItemWithKids))
+    const nextItem = { ...item, kids: kidItemsWithKids }
+
+    return nextItem
+  }
+
+  const item = await getItemWithKids(store.getState().items[id])
+
+  return { item }
 }
 
 export default ItemPage

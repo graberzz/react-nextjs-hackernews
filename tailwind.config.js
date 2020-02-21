@@ -3,12 +3,16 @@ module.exports = {
     preflight: false,
   },
   theme: {
-    colors: {
-      primary: '#ff6600',
-      background: '#f6f6ef',
-      inherit: 'inherit',
+    extend: {
+      colors: {
+        primary: '#ff6600',
+        background: '#f6f6ef',
+        inherit: 'inherit',
+      },
+      fontSize: {
+        '2xs': '0.625rem',
+      },
     },
-    extend: {},
   },
   variants: {},
   plugins: [],

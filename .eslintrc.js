@@ -41,10 +41,8 @@ module.exports = {
         requireLast: true,
       },
     }],
-    '@typescript-eslint/explicit-function-return-type': ['error', {
-      allowExpressions: true,
-      allowTypedFunctionExpressions: true,
-      allowHigherOrderFunctions: true,
-    }]
+    '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
+
   },
 }
