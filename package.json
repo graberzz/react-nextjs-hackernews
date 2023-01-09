@@ -14,7 +14,7 @@
   "dependencies": {
     "axios": "^0.19.2",
     "firebase": "^7.7.0",
-    "luxon": "^1.22.0",
+    "luxon": "^1.28.1",
     "next": "9.2.1",
     "next-redux-wrapper": "^4.0.1",
     "nprogress": "^0.2.0",
